@@ -3,7 +3,8 @@ extern crate bindgen;
 use std::env;
 use std::path::PathBuf;
 
-fn main() {
+fn main()
+{
     let libdir_path = PathBuf::from("include")
         .canonicalize()
         .expect("cannot canonicalize path");
@@ -17,7 +18,8 @@ fn main() {
 
     let src = [
         "include/foo.c",
-        "include/bar.c"
+        "include/bar.c",
+        "include/blah.c"
     ];
 
     let mut builder = cc::Build::new();
