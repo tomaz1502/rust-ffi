@@ -4,10 +4,7 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
-    // println!("cargo:rustc-link-lib=bz2");
     let libdir_path = PathBuf::from("include")
-        // Canonicalize the path as `rustc-link-search` requires an absolute
-        // path.
         .canonicalize()
         .expect("cannot canonicalize path");
 
