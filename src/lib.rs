@@ -5,14 +5,24 @@
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 #[cfg(test)]
-mod tests {
+mod tests
+{
 
-    use super::add;
+    use super::{add, sub};
     
     #[test]
-    fn add_test() {
+    fn add_test()
+    {
         unsafe {
             assert_eq!(2 + 3, add(2, 3));
+        }
+    }
+
+    #[test]
+    fn sub_test()
+    {
+        unsafe {
+            assert_eq!(2 - 3, sub(2, 3));
         }
     }
 }

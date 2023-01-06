@@ -1,4 +1,4 @@
-#include "foo.h"
+#include "baz.h"
 
 int add(int a, int b)
 {

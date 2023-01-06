@@ -8,15 +8,24 @@ fn main() {
         .canonicalize()
         .expect("cannot canonicalize path");
 
-    let headers_path = libdir_path.join("foo.h");
+    let headers_path = libdir_path.join("baz.h");
     let headers_path_str = headers_path.to_str().expect("Path is not a valid string");
 
     println!("cargo:rustc-link-search={}", libdir_path.to_str().unwrap());
-    println!("cargo:rustc-link-lib=foo");
+    println!("cargo:rustc-link-lib=baz");
     println!("cargo:rerun-if-changed={}", headers_path_str);
 
+    let src = [
+        "include/foo.c",
+        "include/bar.c"
+    ];
+
+    let mut builder = cc::Build::new();
+    let build = builder.files(src.iter());
+    build.compile("baz");
+
     let bindings = bindgen::Builder::default()
-        .header("include/foo.h")
+        .header("include/baz.h")
         .generate()
         .expect("Unable to generate bindings");
 
