@@ -2,53 +2,58 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 
-// include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 include!("./bindings.rs");
+
+pub fn vimBufferGetAllText(buff: *mut file_buffer) -> String
+{
+    let mut text = String::new();
+    unsafe {
+        let line_count = vimBufferGetLineCount(buff);
+        for line in 1 ..= line_count {
+            let line_txt = vimBufferGetLine(buff, line as i64);
+            let len = libc::strlen(line_txt as *mut i8);
+            let line_string: String = String::from_raw_parts(line_txt, len, len);
+            text.push_str(&line_string);
+        }
+    }
+    text
+}
+
+pub fn vimPrintAllText(buff: *mut file_buffer)
+{
+    unsafe {
+        let line_count = vimBufferGetLineCount(buff);
+        for line in 1 ..= line_count {
+            let line_txt = vimBufferGetLine(buff, line as i64) as *const i8;
+            libc::puts(line_txt);
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests
 {
     use crate::vimBufferOpen;
     use crate::vimInit;
-    use crate::char_u;
-    use ::std::os::raw::c_char;
+    // use ::std::os::raw::c_char;
     #[test]
     fn test()
     {
-        let mut bla: char_u = 'a' as char_u;
-        let v: *mut char_u = &mut bla;
-        let mut c = '\0' as c_char;
-        let mut bla : *mut c_char = &mut c;
-        let bla2 = &mut bla;
+
+        let argc = 1;
+        let mut argv_string = String::from("vim");
+        let mut argv2 = argv_string.as_mut_ptr() as *mut i8;
+        let argv = &mut argv2;
+
+        let mut file_name_string = String::from("file_name");
+        let file_name = file_name_string.as_mut_ptr();
+
         unsafe {
-            vimInit(1, bla2);
-            vimBufferOpen(v, 0, 0);
+            vimInit(argc, argv);
+            let buff = vimBufferOpen(file_name, 0, 0);
+            super::vimPrintAllText(buff);
         }
+        
         assert_eq!(1, 1);
     }
-//     use super::{add, sub, wot, S};
-    
-//     #[test]
-//     fn add_test()
-//     {
-//         unsafe {
-//             assert_eq!(2 + 3, add(2, 3));
-//         }
-//     }
-
-//     #[test]
-//     fn sub_test()
-//     {
-//         unsafe {
-//             assert_eq!(2 - 3, sub(2, 3));
-//         }
-//     }
-
-//     #[test]
-//     fn wot_test()
-//     {
-//         unsafe {
-//             assert_eq!(42, wot(S{}));
-//         }
-//     }
 }
